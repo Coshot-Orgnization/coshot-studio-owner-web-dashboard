@@ -43,7 +43,7 @@ const ProtectedRoute = ({ children }) => {
 
     useEffect(() => {
         if (shouldRedirectToLogin) {
-            router.replace("/");
+            router.replace("/login");
             return;
         }
 
