@@ -112,33 +112,103 @@ const SettlementsDetails = () => {
                                             </p>
                                         </div>
 
-                                        <div className="mx-auto mt-4 w-full max-w-71.25 rounded-xl border border-[#ECEBF3] bg-white px-3.5 py-3">
+                                        <div className="mx-auto mt-4 w-full max-w-80 rounded-xl border border-[#ECEBF3] bg-white px-3.5 py-3">
                                             <div className="space-y-1.5 text-[11px]">
-                                                <div className="flex items-center justify-between">
+                                                <p className="text-[#64748B]">SETTLEMENT BREAKDOWN </p>
+                                                <div className="flex items-center justify-between mt-1">
                                                     <p className="text-[#8C8AA0]">Gross Amount</p>
                                                     <p className="font-semibold text-[#262635]">{formatINR(settlement?.grossAmount)}</p>
                                                 </div>
 
                                                 <div className="flex items-center justify-between">
-                                                    <p className="text-[#8C8AA0]">Platform Fee</p>
-                                                    <p className="font-semibold text-[#EF4444]">-{formatINR(settlement?.totalPlatformFee)}</p>
+                                                    <p className="text-[#8C8AA0]">Refunds</p>
+                                                    <p className="font-semibold text-[#EF4444]">-{formatINR(settlement?.totalRefunded)}</p>
                                                 </div>
 
                                                 <div className="flex items-center justify-between">
-                                                    <p className="text-[#8C8AA0]">Total Refunded</p>
-                                                    <p className="font-semibold text-[#EF4444]">-{formatINR(settlement?.totalRefunded)}</p>
+                                                    <p className="text-[#8C8AA0]">Commission ({toNumber(settlement?.commissionPercent)}%)</p>
+                                                    <p className="font-semibold text-[#EF4444]">-{formatINR(settlement?.commissionAmount)}</p>
                                                 </div>
-                                            </div>
-
-                                            <div className="mt-2 border-t border-dashed border-[#E5E4EF] pt-2">
-                                                <div className="flex items-center justify-between text-[11px]">
-                                                    <p className="font-semibold text-[#5D5B71]">Total Payout</p>
+                                                <hr className="border-dashed text-[#8C8AA0]" />
+                                                <div className="flex items-center justify-between">
+                                                    <p className="text-[#8C8AA0]">Net Amount</p>
                                                     <p className="font-semibold text-[#262635]">{formatINR(settlement?.netAmount)}</p>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div className="mx-auto mt-5 w-full max-w-92.5">
+                                        <div className="flex gap-4 justify-center mt-5">
+                                            {settlement?.operationalCount > 0 && <div className="w-full text-center">
+                                                <p className="text-[#64748B]">Operational Count:- {settlement?.operationalCount}</p>
+                                                {settlement?.lineItems?.operational?.map((item, index) => {
+                                                    return (
+                                                        <div className="mx-auto mt-4 w-full max-w-80 rounded-xl border border-[#ECEBF3] bg-white px-3.5 py-3" key={index}>
+                                                            <div className="space-y-1.5 text-[11px]">
+                                                                <p className="text-[#64748B] text-[16px]">{item?.studioName}</p>
+                                                                <div className="flex items-center justify-between mt-1">
+                                                                    <p className="text-[#8C8AA0]">Gross Amount</p>
+                                                                    <p className="font-semibold text-[#262635]">{formatINR(item?.grossAmount)}</p>
+                                                                </div>
+
+                                                                <div className="flex items-center justify-between">
+                                                                    <p className="text-[#8C8AA0]">Refunds</p>
+                                                                    <p className="font-semibold text-[#EF4444]">-{formatINR(item?.totalRefunded)}</p>
+                                                                </div>
+
+                                                                <div className="flex items-center justify-between">
+                                                                    <p className="text-[#8C8AA0]">Commission</p>
+                                                                    <p className="font-semibold text-[#EF4444]">-{formatINR(item?.commission)}</p>
+                                                                </div>
+
+                                                                <div className="flex items-center justify-between">
+                                                                    <p className="text-[#8C8AA0]">Settled Amount</p>
+                                                                    <p className="font-semibold text-[#262635]">{formatINR(item?.settledAmount)}</p>
+                                                                </div>
+
+                                                                <div className="flex items-center justify-between">
+                                                                    <p className="text-[#8C8AA0]">Completed At</p>
+                                                                    <p className="font-semibold text-[#262635]">{formatBookingDate(item?.completedAt)}</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                })}
+                                            </div>
+                                            }
+                                            {settlement?.cancellationCount > 0 && <div className="w-full text-center">
+                                                <p className="text-[#64748B]">Cancellation Count:- {settlement?.cancellationCount}</p>
+                                                {settlement?.lineItems?.cancellation?.map((item, index) => {
+                                                    return (
+                                                        <div className="mx-auto mt-4 w-full max-w-80 rounded-xl border border-[#ECEBF3] bg-white px-3.5 py-3" key={index}>
+                                                            <div className="space-y-1.5 text-[11px]">
+                                                                <p className="text-[#64748B] text-[16px]">{item?.studioName}</p>
+                                                                <div className="flex items-center justify-between">
+                                                                    <p className="text-[#8C8AA0]">Booked At</p>
+                                                                    <p className="font-semibold text-[#262635]">{formatBookingDate(item?.bookingDate)}</p>
+                                                                </div>
+
+                                                                <div className="flex items-center justify-between">
+                                                                    <p className="text-[#8C8AA0]">Cancelled At</p>
+                                                                    <p className="font-semibold text-[#262635]">{formatBookingDate(item?.cancelledAt)}</p>
+                                                                </div>
+
+                                                                <div className="flex items-center justify-between">
+                                                                    <p className="text-[#8C8AA0]">Owner Share</p>
+                                                                    <p className="font-semibold text-[#262635]">{formatINR(item?.studioOwnerAmount)}</p>
+                                                                </div>
+
+                                                                <div className="flex items-center justify-between">
+                                                                    <p className="text-[#8C8AA0]">Policy Title</p>
+                                                                    <p className="font-semibold text-[#262635]">{item?.policyTitle}</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                })}
+                                            </div>}
+                                        </div>
+
+                                        <div className="mx-auto mt-5 w-full max-w-80">
                                             <p className="mb-2 text-[10px] font-semibold tracking-[1.2px] text-[#7F7C93] uppercase">Transfer Details</p>
 
                                             <div className="rounded-xl border border-[#ECEBF3] bg-white px-3.5 py-3">
@@ -170,56 +240,6 @@ const SettlementsDetails = () => {
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <div className="mx-auto mt-4 w-full max-w-92.5">
-                                            <p className="mb-2 text-[10px] font-semibold tracking-[1.2px] text-[#7F7C93] uppercase">
-                                                Booking Breakdown ({bookingBreakdown.length})
-                                            </p>
-
-                                            <div className="space-y-2">
-                                                {bookingBreakdown.length > 0 ? (
-                                                    bookingBreakdown.map((item) => (
-                                                        <article key={item.id || item.referenceCode} className="rounded-xl border border-[#ECEBF3] bg-white px-3.5 py-3">
-                                                            <div className="flex items-start justify-between gap-3">
-                                                                <div>
-                                                                    <p className="text-[13px] font-semibold text-[#2A2A36]">{item?.referenceCode || "—"}</p>
-                                                                    <p className="mt-0.5 text-[10px] font-medium text-[#8D8BA1]">{item?.studioName || "Studio"} • {formatBookingDate(item?.bookingDate)}</p>
-                                                                </div>
-
-                                                                <div className="text-right">
-                                                                    <p className="text-[14px] font-semibold text-[#2A2A36]">{formatINR(item?.settledAmount)}</p>
-                                                                    <p className="text-[9px] font-semibold tracking-[0.8px] text-[#A2A0B2] uppercase">Net Total</p>
-                                                                </div>
-                                                            </div>
-
-                                                            <div className="mt-2 grid grid-cols-3 gap-2 border-t border-dashed border-[#E5E4EF] pt-2">
-                                                                <div>
-                                                                    <p className="text-[9px] font-medium text-[#A09DB0]">Gross</p>
-                                                                    <p className="mt-0.5 text-[10px] font-semibold text-[#5D5B71]">{formatINR(item?.grossAmount)}</p>
-                                                                </div>
-
-                                                                <div>
-                                                                    <p className="text-[9px] font-medium text-[#A09DB0]">Fee</p>
-                                                                    <p className="mt-0.5 text-[10px] font-semibold text-[#EF4444]">-{formatINR(item?.platformFee)}</p>
-                                                                </div>
-
-                                                                <div>
-                                                                    <p className="text-[9px] font-medium text-[#A09DB0]">Refunds</p>
-                                                                    <p className="mt-0.5 text-[10px] font-semibold text-[#EF4444]">
-                                                                        {toNumber(item?.refundedAmount) > 0 ? `-${formatINR(item?.refundedAmount)}` : formatINR(0)}
-                                                                    </p>
-                                                                </div>
-                                                            </div>
-                                                        </article>
-                                                    ))
-                                                ) : (
-                                                    <div className="rounded-xl border border-dashed border-[#d9d8e7] bg-[#fafafe] px-4 py-6 text-center text-[12px] font-medium text-[#8d8aa0]">
-                                                        No booking line items found for this settlement.
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-
                                         <p className="mt-4 text-center text-[9px] font-semibold tracking-[1px] text-[#B0AEC0] uppercase">
                                             {footerTransferText}
                                         </p>
