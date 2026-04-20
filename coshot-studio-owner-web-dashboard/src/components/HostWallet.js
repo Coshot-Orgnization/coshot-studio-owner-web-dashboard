@@ -9,6 +9,7 @@ import NoData from './NoData';
 import CommonPageLoader from './CommonPageLoader';
 import { getPaginationFromResponse } from '@/helpers/pagination';
 import { useGetSettlementsHistoryQuery, useGetSettlementsSummaryQuery } from '@/redux/settlements/settlementsApi';
+import { formatAmount } from '@/helpers/formatAmount';
 
 const DEFAULT_LIMIT = 8;
 
@@ -17,13 +18,7 @@ const toNumber = (value) => {
     return Number.isFinite(parsed) ? parsed : 0;
 };
 
-const formatINR = (value) => {
-    const amount = toNumber(value);
-    return `₹${new Intl.NumberFormat('en-IN', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-    }).format(amount)}`;
-};
+const formatINR = (value) => `₹${formatAmount(toNumber(value), { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 const formatDate = (value) => {
     if (!value) return '—';
@@ -109,9 +104,12 @@ const HostWallet = () => {
 
                         <div className="grid gap-6 lg:grid-cols-2">
                             <div>
-                                <div className="mb-3 flex items-center justify-between">
+                                <div className="group relative mb-3 flex items-center justify-between">
                                     <p className="text-[14px] font-semibold tracking-[0.08em] text-[#6e7893] uppercase">Payout Pipeline</p>
-                                    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <div className="absolute top-full right-0 mb-2 hidden w-48 rounded-lg bg-[#1e293b] p-2 text-[11px] text-white shadow-lg group-hover:block z-1">
+                                        Earnings that have cleared the cooling period and are ready for the next scheduled transfer.
+                                    </div>
+                                    <svg className="cursor-help" width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M6.75 3.72656H8.22656V5.23828H6.75V3.72656ZM6.75 6.75H8.22656V11.25H6.75V6.75ZM7.48828 0C3.33984 0 0 3.33984 0 7.48828C0 11.6367 3.33984 14.9766 7.48828 14.9766C11.6367 14.9766 14.9766 11.6367 14.9766 7.48828C14.9766 3.33984 11.6367 0 7.48828 0ZM7.48828 13.5C4.18359 13.5 1.47656 10.793 1.47656 7.48828C1.47656 4.18359 4.18359 1.47656 7.48828 1.47656C10.793 1.47656 13.5 4.18359 13.5 7.48828C13.5 10.793 10.793 13.5 7.48828 13.5Z" fill="#94A3B8" />
                                     </svg>
                                 </div>
@@ -156,9 +154,12 @@ const HostWallet = () => {
                             </div>
 
                             <div>
-                                <div className="mb-3 flex items-center justify-between">
+                                <div className="group relative mb-3 flex items-center justify-between">
                                     <p className="text-[14px] font-semibold tracking-[0.08em] text-[#6e7893] uppercase">Cooling</p>
-                                    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <div className="absolute top-full right-0 mb-2 hidden w-48 rounded-lg bg-[#1e293b] p-2 text-[11px] text-white shadow-lg group-hover:block z-1">
+                                        Recent earnings currently in the mandatory verification period before becoming eligible for payout.
+                                    </div>
+                                    <svg className="cursor-help" width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M6.75 3.72656H8.22656V5.23828H6.75V3.72656ZM6.75 6.75H8.22656V11.25H6.75V6.75ZM7.48828 0C3.33984 0 0 3.33984 0 7.48828C0 11.6367 3.33984 14.9766 7.48828 14.9766C11.6367 14.9766 14.9766 11.6367 14.9766 7.48828C14.9766 3.33984 11.6367 0 7.48828 0ZM7.48828 13.5C4.18359 13.5 1.47656 10.793 1.47656 7.48828C1.47656 4.18359 4.18359 1.47656 7.48828 1.47656C10.793 1.47656 13.5 4.18359 13.5 7.48828C13.5 10.793 10.793 13.5 7.48828 13.5Z" fill="#94A3B8" />
                                     </svg>
                                 </div>
@@ -191,7 +192,7 @@ const HostWallet = () => {
                                     Loading settlement history...
                                 </div>
                             ) : settlementsHistoryData?.data?.data?.length > 0 ? (
-                                <div className="grid gap-4 lg:grid-cols-2">
+                                <div className="grid gap-4 lg:grid-cols-2 place-self-center sm:place-self-auto">
                                     {settlementsHistoryData?.data?.data?.map((settlement) => (
                                         <article key={settlement.id} className="rounded-[14px] border border-[#e3e7f3] bg-white px-4 py-3">
                                             <div className="flex items-start justify-between gap-3">

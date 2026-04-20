@@ -10,11 +10,12 @@ import { showErrorToast, showSuccessToast } from '@/helpers/toast'
 import StudioSubmitModal from '@/modals/StudioSubmitModal'
 import { useRefundPoliciesListQuery } from '@/redux/public/publicApi'
 import { useGetStudioOwnerProfileQuery } from '@/redux/studio-owner/studioOwnerApi'
+import { formatAmount } from '@/helpers/formatAmount'
 
 const PLACEHOLDER_IMAGE = '/images/landingPage/imagePlaceholder.jpg'
 const DAY_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
-const inr = (value) => `₹${Number(value || 0)}`
+const inr = (value) => `₹${formatAmount(value || 0)}`
 const minsToTime = (m) => {
     const n = Number(m);
     if (!Number.isFinite(n)) return m || "";

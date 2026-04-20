@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import ReusableCalendarInput from './ReusableCalendarInput';
 import { getTodayIsoLocal } from '@/helpers/formatDate';
 import NoData from './NoData';
+import { formatAmount } from '@/helpers/formatAmount';
 
 const toNumber = (value) => {
     const parsedValue = Number(value);
@@ -133,7 +134,7 @@ const formatDateDisplay = (value) => {
     return `${day} / ${month} / ${year}`;
 };
 
-const formatINR = (value) => `₹${Number(value || 0)}`;
+const formatINR = (value) => `₹${formatAmount(value || 0)}`;
 
 const DatePill = ({ label, value, onChange, minDate, maxDate }) => (
     <div className="min-w-33">

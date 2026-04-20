@@ -5,13 +5,14 @@ import { useParams } from "next/navigation";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import { useGetSettlementDetailsQuery } from "@/redux/settlements/settlementsApi";
+import { formatAmount } from "@/helpers/formatAmount";
 
 const toNumber = (value) => {
     const parsedValue = Number(value);
     return Number.isFinite(parsedValue) ? parsedValue : 0;
 };
 
-const formatINR = (value) => `₹${Number(toNumber(value), { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+const formatINR = (value) => `₹${formatAmount(toNumber(value), { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 const formatStatusDate = (value) => {
     if (!value) return "—";

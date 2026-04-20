@@ -1,7 +1,7 @@
 "use client";
 import { useStudioOwnerDashboardStatsQuery } from '@/redux/studio-owner/studioOwnerApi'
 import { useSelector } from 'react-redux';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Navbar from './Navbar';
 import HostStudiosList from './HostStudiosList';
 import BookingSkeletonLoading from '@/helpers/BookingSkeletonLoading';
@@ -12,6 +12,8 @@ import CommonPagination from './CommonPagination';
 import { getPaginationFromResponse } from '@/helpers/pagination';
 import NoData from './NoData';
 import { useStudioOwnerStudioListQuery } from '@/redux/studios/studiosApi';
+import { useCheckProfileMutation } from '@/redux/auth/authApi';
+import { formatAmount } from '@/helpers/formatAmount';
 
 const Dashboard = () => {
     const { data } = useStudioOwnerDashboardStatsQuery(undefined, {
@@ -25,6 +27,7 @@ const Dashboard = () => {
         page: currentPage,
         limit: DEFAULT_LIMIT,
     });
+    const [checkProfile] = useCheckProfileMutation();
     const studiosPagination = getPaginationFromResponse(studiList, DEFAULT_LIMIT);
     const router = useRouter();
 
@@ -38,7 +41,7 @@ const Dashboard = () => {
     const statCards = [
         { label: "Total Studios", value: totalStudios, prefix: "" },
         { label: "Next Bookings", value: nextBookings, prefix: "" },
-        { label: "Total Earnings", value: Number(totalEarnings), prefix: "₹" },
+        { label: "Total Earnings", value: formatAmount(totalEarnings), prefix: "₹" },
     ];
 
     const BOOKING_TABS = [
@@ -56,6 +59,16 @@ const Dashboard = () => {
 
         return date.toLocaleDateString("en-GB").replace(/\//g, "-");
     };
+
+    useEffect(() => {
+        checkProfile({ role: "studio_owner" }).unwrap().then((res) => {
+            if (res?.data?.user?.profile?.isProfileCompleted) {
+                setIsProfileCompleted(true);
+            }
+        }).catch((err) => {
+            console.error("Error checking profile completion:", err);
+        });
+    }, [checkProfile])
 
     return (
         <section className="w-full pt-15 ">

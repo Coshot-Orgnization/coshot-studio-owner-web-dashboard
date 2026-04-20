@@ -6,9 +6,31 @@ import Sidebar from './Sidebar';
 import Header from './Header';
 import ProtectedRoute from './ProtectedRoute';
 import NoInternetConnectionPage from './NoInternetConnectionPage';
+import CommonPageLoader from './CommonPageLoader';
 
 const GlobalClientLayout = ({ children }) => {
     const [isOnline, setIsOnline] = useState(true);
+    const [isUiLoading, setIsUiLoading] = useState(true);
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+
+        const handleUiLoaded = () => setIsUiLoading(false);
+
+        if (document.readyState === 'complete') {
+            handleUiLoaded();
+            return;
+        }
+
+        window.addEventListener('load', handleUiLoaded);
+
+        const fallbackTimeout = setTimeout(handleUiLoaded, 1500);
+
+        return () => {
+            window.removeEventListener('load', handleUiLoaded);
+            clearTimeout(fallbackTimeout);
+        };
+    }, []);
 
     useEffect(() => {
         if (typeof window === 'undefined') return;
@@ -25,6 +47,10 @@ const GlobalClientLayout = ({ children }) => {
             window.removeEventListener('offline', updateOnlineStatus);
         };
     }, []);
+
+    if (isUiLoading) {
+        return <CommonPageLoader />;
+    }
 
     return (
         <SidebarProvider>

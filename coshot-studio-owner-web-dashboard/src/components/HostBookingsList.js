@@ -1,3 +1,4 @@
+import { formatAmount } from '@/helpers/formatAmount';
 import { imageSrcHandler } from '@/helpers/imageSrcHandler'
 import CancellationReasonModal from '@/modals/CancellationReasonModal';
 import ReviewModal from '@/modals/ReviewModal';
@@ -49,7 +50,7 @@ const HostBookingsList = ({ booking, showBookingActions = false, onCancelBooking
                     <p className="text-sm text-[#2f2f3f] flex gap-2 items-center"><img src="/images/booking/calender.png" className="h-4 w-4" /> {formatBookingDate(booking.bookingDate)}</p>
                     <p className="text-sm text-[#2f2f3f] flex gap-2 items-center"><img src="/images/booking/clock.png" className="h-4 w-4" /> {booking.startTimeFormatted} - {booking.endTimeFormatted}</p>
                     <p className="text-sm text-[#2f2f3f] flex gap-2 items-center"><img src="/images/booking/duration.png" className="h-4 w-4" /> {booking.durationHours} hours</p>
-                    <p className="text-sm text-[#2f2f3f] flex gap-2 items-center">💰 Earnings: ₹{Number(booking.finalAmount)}</p>
+                    <p className="text-sm text-[#2f2f3f] flex gap-2 items-center">💰 Earnings: ₹{formatAmount(booking.finalAmount)}</p>
                     <p className="text-sm text-[#2f2f3f] flex gap-2 items-center"><img src="/images/booking/bookingId.png" className="h-4 w-4" /> {booking?.referenceCode}</p>
                 </div>
             </div>

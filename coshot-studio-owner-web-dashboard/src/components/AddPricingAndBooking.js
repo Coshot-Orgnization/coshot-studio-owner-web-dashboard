@@ -6,6 +6,7 @@ import Footer from "./Footer";
 import Navbar from "./Navbar";
 import { useCreateStudioMutation, useGetStudioDetailsQuery } from "@/redux/studios/studiosApi";
 import { showErrorToast, showSuccessToast } from "@/helpers/toast";
+import { formatAmount } from "@/helpers/formatAmount";
 
 const roundedInputClass =
     "mt-2 h-11.5 w-full rounded-full border border-[#dedde7] bg-white px-5 text-[14px] text-[#5e5b71] shadow-[0_8px_20px_rgba(46,35,85,0.06)] outline-hidden [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none";
@@ -19,10 +20,10 @@ const DiscountPreview = ({ hours, discount, pricePerHour }) => {
         <div className="mt-2 text-[12px] leading-4 text-[#6f6b84]">
             <p className="font-semibold text-[#5b5671]">Price Preview <span className="font-normal italic text-[#88839c]">(Auto-calculated)</span></p>
             <p>
-                {hours} hours × ₹{Number(pricePerHour)} = ₹{Number(gross)}
-                <span className="pl-4">Discount ({discount}%) = -₹{Number(discountAmount)}</span>
+                {hours} hours × ₹{formatAmount(pricePerHour)} = ₹{formatAmount(gross)}
+                <span className="pl-4">Discount ({discount}%) = -₹{formatAmount(discountAmount)}</span>
             </p>
-            <p className="font-semibold text-[#4e4967]">Total: ₹{Number(net)}</p>
+            <p className="font-semibold text-[#4e4967]">Total: ₹{formatAmount(net)}</p>
         </div>
     );
 };

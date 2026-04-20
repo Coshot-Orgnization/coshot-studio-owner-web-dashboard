@@ -33,7 +33,15 @@ export const authApi = api.injectEndpoints({
                 body,
             }),
         }),
+
+        checkProfile: builder.mutation({
+            query: (body) => ({
+                url: "/auth/check-profile",
+                method: "POST",
+                body,
+            }),
+        }),
     }),
 });
 
-export const { useSendOtpMutation, useVerifyOtpMutation, useRefeshAccessTokenMutation, useLogOutMutation } = authApi;
+export const { useSendOtpMutation, useVerifyOtpMutation, useRefeshAccessTokenMutation, useLogOutMutation, useCheckProfileMutation } = authApi;
