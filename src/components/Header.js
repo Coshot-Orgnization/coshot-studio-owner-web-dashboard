@@ -8,10 +8,10 @@ const Header = () => {
             <div className="h-full flex items-center justify-center px-4">
                 <Link href="/" className="inline-flex items-center" aria-label="Go to homepage">
                     <Image
-                        src="/images/CoshotLogoBlack.png"
+                        src="/images/Logo.png"
                         alt="Coshot"
-                        width={180}
-                        height={100}
+                        width={190}
+                        height={110}
                         priority
                     />
                 </Link>
