@@ -54,6 +54,7 @@ const capitalize = (value) => {
 
 const SettlementsDetails = () => {
     const params = useParams();
+    const [activeTab, setActiveTab] = React.useState("operational");
     const settlementId = Array.isArray(params?.id) ? params.id[0] : params?.id;
 
     const {
@@ -67,7 +68,6 @@ const SettlementsDetails = () => {
 
     const settlement = data?.data ?? {};
     const transferDetails = settlement?.bankAccount ?? {};
-    const bookingBreakdown = settlement?.lineItems ?? [];
 
     const statusDate = settlement?.processedAt || settlement?.periodTo;
     const transferDate = settlement?.processedAt || settlement?.periodTo;
@@ -78,7 +78,7 @@ const SettlementsDetails = () => {
         || `Transferred via ${paymentMethod} on ${formatIsoDate(transferDate)}`;
 
     return (
-        <section className="w-full pt-15">
+        <section className="w-full pt-3 md:pt-15">
             <div className="relative mx-auto mt-8 flex w-full max-w-330 flex-col gap-6 px-4 lg:flex-row lg:items-start lg:gap-8 lg:px-6">
                 <Navbar />
 
@@ -137,75 +137,100 @@ const SettlementsDetails = () => {
                                             </div>
                                         </div>
 
-                                        <div className="flex gap-4 justify-center mt-5">
-                                            {settlement?.operationalCount > 0 && <div className="w-full text-center">
-                                                <p className="text-[#64748B]">Operational Count:- {settlement?.operationalCount}</p>
-                                                {settlement?.lineItems?.operational?.map((item, index) => {
-                                                    return (
-                                                        <div className="mx-auto mt-4 w-full max-w-80 rounded-xl border border-[#ECEBF3] bg-white px-3.5 py-3" key={index}>
-                                                            <div className="space-y-1.5 text-[11px]">
-                                                                <p className="text-[#64748B] text-[16px]">{item?.studioName}</p>
-                                                                <div className="flex items-center justify-between mt-1">
-                                                                    <p className="text-[#8C8AA0]">Gross Amount</p>
-                                                                    <p className="font-semibold text-[#262635]">{formatINR(item?.grossAmount)}</p>
-                                                                </div>
-
-                                                                <div className="flex items-center justify-between">
-                                                                    <p className="text-[#8C8AA0]">Refunds</p>
-                                                                    <p className="font-semibold text-[#EF4444]">-{formatINR(item?.totalRefunded)}</p>
-                                                                </div>
-
-                                                                <div className="flex items-center justify-between">
-                                                                    <p className="text-[#8C8AA0]">Commission</p>
-                                                                    <p className="font-semibold text-[#EF4444]">-{formatINR(item?.commission)}</p>
-                                                                </div>
-
-                                                                <div className="flex items-center justify-between">
-                                                                    <p className="text-[#8C8AA0]">Settled Amount</p>
-                                                                    <p className="font-semibold text-[#262635]">{formatINR(item?.settledAmount)}</p>
-                                                                </div>
-
-                                                                <div className="flex items-center justify-between">
-                                                                    <p className="text-[#8C8AA0]">Completed At</p>
-                                                                    <p className="font-semibold text-[#262635]">{formatBookingDate(item?.completedAt)}</p>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    )
-                                                })}
+                                        <div className="mt-6 flex flex-col items-center">
+                                            <div className="flex w-full max-w-80 rounded-full bg-[#f0f0f6] p-1 sm:hidden mb-4">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setActiveTab("operational")}
+                                                    className={`h-9 flex-1 rounded-full text-[11px] font-semibold transition ${activeTab === "operational"
+                                                        ? "bg-white text-[#6D5EF6] shadow-sm"
+                                                        : "text-[#69677f]"
+                                                        }`}
+                                                >
+                                                    Operational ({settlement?.operationalCount || 0})
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setActiveTab("cancellation")}
+                                                    className={`h-9 flex-1 rounded-full text-[11px] font-semibold transition ${activeTab === "cancellation"
+                                                        ? "bg-white text-[#6D5EF6] shadow-sm"
+                                                        : "text-[#69677f]"
+                                                        }`}
+                                                >
+                                                    Cancellations ({settlement?.cancellationCount || 0})
+                                                </button>
                                             </div>
-                                            }
-                                            {settlement?.cancellationCount > 0 && <div className="w-full text-center">
-                                                <p className="text-[#64748B]">Cancellation Count:- {settlement?.cancellationCount}</p>
-                                                {settlement?.lineItems?.cancellation?.map((item, index) => {
-                                                    return (
-                                                        <div className="mx-auto mt-4 w-full max-w-80 rounded-xl border border-[#ECEBF3] bg-white px-3.5 py-3" key={index}>
-                                                            <div className="space-y-1.5 text-[11px]">
-                                                                <p className="text-[#64748B] text-[16px]">{item?.studioName}</p>
-                                                                <div className="flex items-center justify-between">
-                                                                    <p className="text-[#8C8AA0]">Booked At</p>
-                                                                    <p className="font-semibold text-[#262635]">{formatBookingDate(item?.bookingDate)}</p>
-                                                                </div>
 
-                                                                <div className="flex items-center justify-between">
-                                                                    <p className="text-[#8C8AA0]">Cancelled At</p>
-                                                                    <p className="font-semibold text-[#262635]">{formatBookingDate(item?.cancelledAt)}</p>
-                                                                </div>
+                                            <div className="flex flex-col sm:flex-row gap-4 justify-center w-full">
+                                                {(settlement?.operationalCount > 0 && (activeTab === "operational" || window.innerWidth >= 500)) && <div className="w-full text-center">
+                                                    <p className="text-[#64748B]">Operational Count:- {settlement?.operationalCount}</p>
+                                                    {settlement?.lineItems?.operational?.map((item, index) => {
+                                                        return (
+                                                            <div className="mx-auto mt-4 w-full max-w-80 rounded-xl border border-[#ECEBF3] bg-white px-3.5 py-3" key={index}>
+                                                                <div className="space-y-1.5 text-[11px]">
+                                                                    <p className="text-[#64748B] text-[16px]">{item?.studioName}</p>
+                                                                    <div className="flex items-center justify-between mt-1">
+                                                                        <p className="text-[#8C8AA0]">Gross Amount</p>
+                                                                        <p className="font-semibold text-[#262635]">{formatINR(item?.grossAmount)}</p>
+                                                                    </div>
 
-                                                                <div className="flex items-center justify-between">
-                                                                    <p className="text-[#8C8AA0]">Owner Share</p>
-                                                                    <p className="font-semibold text-[#262635]">{formatINR(item?.studioOwnerAmount)}</p>
-                                                                </div>
+                                                                    <div className="flex items-center justify-between">
+                                                                        <p className="text-[#8C8AA0]">Refunds</p>
+                                                                        <p className="font-semibold text-[#EF4444]">-{formatINR(item?.totalRefunded)}</p>
+                                                                    </div>
 
-                                                                <div className="flex items-center justify-between">
-                                                                    <p className="text-[#8C8AA0]">Policy Title</p>
-                                                                    <p className="font-semibold text-[#262635]">{item?.policyTitle}</p>
+                                                                    <div className="flex items-center justify-between">
+                                                                        <p className="text-[#8C8AA0]">Commission</p>
+                                                                        <p className="font-semibold text-[#EF4444]">-{formatINR(item?.commission)}</p>
+                                                                    </div>
+
+                                                                    <div className="flex items-center justify-between">
+                                                                        <p className="text-[#8C8AA0]">Settled Amount</p>
+                                                                        <p className="font-semibold text-[#262635]">{formatINR(item?.settledAmount)}</p>
+                                                                    </div>
+
+                                                                    <div className="flex items-center justify-between">
+                                                                        <p className="text-[#8C8AA0]">Completed At</p>
+                                                                        <p className="font-semibold text-[#262635]">{formatBookingDate(item?.completedAt)}</p>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                    )
-                                                })}
-                                            </div>}
+                                                        )
+                                                    })}
+                                                </div>
+                                                }
+                                                {(settlement?.cancellationCount > 0 && (activeTab === "cancellation" || window.innerWidth >= 1024)) && <div className="w-full text-center">
+                                                    <p className="text-[#64748B]">Cancellation Count:- {settlement?.cancellationCount}</p>
+                                                    {settlement?.lineItems?.cancellation?.map((item, index) => {
+                                                        return (
+                                                            <div className="mx-auto mt-4 w-full max-w-80 rounded-xl border border-[#ECEBF3] bg-white px-3.5 py-3" key={index}>
+                                                                <div className="space-y-1.5 text-[11px]">
+                                                                    <p className="text-[#64748B] text-[16px]">{item?.studioName}</p>
+                                                                    <div className="flex items-center justify-between">
+                                                                        <p className="text-[#8C8AA0]">Booked At</p>
+                                                                        <p className="font-semibold text-[#262635]">{formatBookingDate(item?.bookingDate)}</p>
+                                                                    </div>
+
+                                                                    <div className="flex items-center justify-between">
+                                                                        <p className="text-[#8C8AA0]">Cancelled At</p>
+                                                                        <p className="font-semibold text-[#262635]">{formatBookingDate(item?.cancelledAt)}</p>
+                                                                    </div>
+
+                                                                    <div className="flex items-center justify-between">
+                                                                        <p className="text-[#8C8AA0]">Owner Share</p>
+                                                                        <p className="font-semibold text-[#262635]">{formatINR(item?.studioOwnerAmount)}</p>
+                                                                    </div>
+
+                                                                    <div className="flex items-center justify-between">
+                                                                        <p className="text-[#8C8AA0]">Policy Title</p>
+                                                                        <p className="font-semibold text-[#262635]">{item?.policyTitle}</p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        )
+                                                    })}
+                                                </div>}
+                                            </div>
                                         </div>
 
                                         <div className="mx-auto mt-5 w-full max-w-80">
