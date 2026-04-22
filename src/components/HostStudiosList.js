@@ -1,4 +1,5 @@
 "use client";
+import Image from 'next/image';
 import { imageSrcHandler } from '@/helpers/imageSrcHandler'
 import OfflineBookingModal from '@/modals/OfflineBookingModal';
 import { useRouter } from 'next/navigation';
@@ -16,9 +17,11 @@ const HostStudiosList = ({ studio, formatDate }) => {
             <article className='overflow-hidden rounded-xl border border-[#E8E8E8] bg-[#EFF2FF] cursor-pointer' onClick={() => router?.push(`/studio-details/${studio?.id}`)}>
                 <div className='flex flex-col sm:flex-row gap-3 bg-white sm:max-h-42'>
                     <div className="relative">
-                        <img
+                        <Image
                             src={studio?.coverImage ? imageSrcHandler(studio?.coverImage) : "/images/booking/imagePlaceholder.jpg"}
                             alt={studio?.name}
+                            width={164}
+                            height={168}
                             className='h-42 w-full sm:w-41 object-cover'
                         />
                         <span className={`text-[14px] absolute bottom-0 left-0 p-2 px-5 font-medium bg-[#DBEAFE]/75 rounded-tr-[50px] ${isLive ? "text-[#4D79FF]" : "text-[#8B6CFF]"}`}>
@@ -27,8 +30,12 @@ const HostStudiosList = ({ studio, formatDate }) => {
                     </div>
                     <div className="flex min-w-0 flex-1 flex-col gap-3 justify-between p-3 sm:p-0 sm:mt-1">
                         <div>
-                            <p className="truncate text-[14px] font-semibold text-[#1f1f2a] flex gap-2 items-center"><img src="/images/booking/studioName.png" className="h-4 w-4" /> {studio.name}</p>
-                            <p className="leading-snug text-[14px] flex items-start gap-2 mt-2 text-[#505050]"><img src="/images/booking/location.png" className="h-4 w-3 mt-0.5 shrink-0" /> <span className="line-clamp-2">{studio?.location?.addressLine1}, {studio?.location?.addressLine2}, {studio?.location?.city}</span></p>
+                            <p className="truncate text-[14px] font-semibold text-[#1f1f2a] flex gap-2 items-center">
+                                <Image src="/images/booking/studioName.png" alt="studio" width={16} height={16} className="h-4 w-4" /> {studio.name}
+                            </p>
+                            <p className="leading-snug text-[14px] flex items-start gap-2 mt-2 text-[#505050]">
+                                <Image src="/images/booking/location.png" alt="location" width={12} height={16} className="h-4 w-3 mt-0.5 shrink-0" /> <span className="line-clamp-2">{studio?.location?.addressLine1}, {studio?.location?.addressLine2}, {studio?.location?.city}</span>
+                            </p>
                         </div>
                         <span className='text-[12px] font-semibold text-[#6d6d6d] sm:mb-2'>Added on : {createdOn}</span>
                     </div>

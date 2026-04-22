@@ -55,6 +55,12 @@ const capitalize = (value) => {
 const SettlementsDetails = () => {
     const params = useParams();
     const [activeTab, setActiveTab] = React.useState("operational");
+    const [isMounted, setIsMounted] = React.useState(false);
+
+    React.useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
     const settlementId = Array.isArray(params?.id) ? params.id[0] : params?.id;
 
     const {
@@ -162,7 +168,7 @@ const SettlementsDetails = () => {
                                             </div>
 
                                             <div className="flex flex-col sm:flex-row gap-4 justify-center w-full">
-                                                {(settlement?.operationalCount > 0 && (activeTab === "operational" || window.innerWidth >= 500)) && <div className="w-full text-center">
+                                                {(isMounted && settlement?.operationalCount > 0 && (activeTab === "operational" || window.innerWidth >= 500)) && <div className="w-full text-center">
                                                     <p className="text-[#64748B]">Operational Count:- {settlement?.operationalCount}</p>
                                                     {settlement?.lineItems?.operational?.map((item, index) => {
                                                         return (
@@ -199,7 +205,7 @@ const SettlementsDetails = () => {
                                                     })}
                                                 </div>
                                                 }
-                                                {(settlement?.cancellationCount > 0 && (activeTab === "cancellation" || window.innerWidth >= 1024)) && <div className="w-full text-center">
+                                                {(isMounted && settlement?.cancellationCount > 0 && (activeTab === "cancellation" || window.innerWidth >= 1024)) && <div className="w-full text-center">
                                                     <p className="text-[#64748B]">Cancellation Count:- {settlement?.cancellationCount}</p>
                                                     {settlement?.lineItems?.cancellation?.map((item, index) => {
                                                         return (

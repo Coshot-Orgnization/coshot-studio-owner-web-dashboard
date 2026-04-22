@@ -7,3 +7,5 @@ export const api = createApi({
     endpoints: (builder) => ({}),
     tagTypes: [],
 });
+
+export const { resetApiState } = api;

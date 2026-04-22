@@ -13,7 +13,9 @@ import { useDeleteUserProfileMutation, useGetStudioOwnerProfileQuery, useSendEma
 import { useGetOwnerBankAccountDetailsQuery } from '@/redux/bank-accounts/bankAccountsApi';
 
 const HostDetails = () => {
-    const { data, isLoading, isFetching, refetch: fetchProfile } = useGetStudioOwnerProfileQuery();
+    const { data, isLoading, isFetching, refetch: fetchProfile } = useGetStudioOwnerProfileQuery(undefined, {
+        refetchOnMountOrArgChange: true,
+    });
     const [updateProfile] = useUpdateStudioProfileMutation();
     const [deleteOwnerProfile, { isLoading: isDeleting }] = useDeleteUserProfileMutation();
 
@@ -47,7 +49,9 @@ const HostDetails = () => {
         profile?.profileImage ||
         '';
     const profileImage = imageSrcHandler(profileImagePath);
-    const { data: bankDetailsData, refetch: fetchBankDetails } = useGetOwnerBankAccountDetailsQuery()
+    const { data: bankDetailsData, refetch: fetchBankDetails } = useGetOwnerBankAccountDetailsQuery(undefined, {
+        refetchOnMountOrArgChange: true,
+    });
     const [sendEmailOtp, { isLoading: isSendingEmailOtp }] = useSendEmailVerificationOtpMutation();
     const [verifyEmailOtp, { isLoading: isVerifyingEmailOtp }] = useVerifyOwnerEmailOtpMutation();
     const getFileNameFromPath = (path = '') => {

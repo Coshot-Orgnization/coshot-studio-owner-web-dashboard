@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import LogoutModal from "@/modals/LogoutModal";
@@ -197,7 +198,15 @@ const Navbar = ({ onLogout }) => {
                         showSuccess={showSuccess}
                         disabled={isNextStepLocked}
                     >
-                        {!studioSetupSteps.includes(item) && <img src={item.imageUrl} alt={item.label} className="m-2 h-5 w-5 object-contain" />}
+                        {!studioSetupSteps.includes(item) && (
+                            <Image
+                                src={item.imageUrl}
+                                alt={item.label}
+                                width={20}
+                                height={20}
+                                className="m-2 h-5 w-5 object-contain"
+                            />
+                        )}
                     </NavButton>
                 );
             })}

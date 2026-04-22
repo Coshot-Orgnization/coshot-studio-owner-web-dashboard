@@ -123,9 +123,14 @@ const websiteJsonLd = {
 };
 
 export default function RootLayout({ children }) {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://maida-acheilary-luisa.ngrok-free.dev";
+  const apiOrigin = new URL(apiUrl).origin;
+
   return (
     <html lang="en">
       <head>
+        <link rel="preconnect" href={apiOrigin} />
+        <link rel="dns-prefetch" href={apiOrigin} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}

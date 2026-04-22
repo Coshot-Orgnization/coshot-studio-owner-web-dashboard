@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useCancelBookingByOwnerMutation, useStudioOwnerBookingListQuery } from '@/redux/studio-owner/studioOwnerApi'
 import Navbar from './Navbar';
 import BookingSkeletonLoading from '@/helpers/BookingSkeletonLoading';
@@ -20,6 +20,11 @@ const BOOKING_TABS = [
 ];
 
 const HostBookings = ({ withTabs = true, status, date, embedded = false, title = "Manage Bookings", showBookingActions = false }) => {
+    const [isMounted, setIsMounted] = useState(false);
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
     const DEFAULT_PAGE = 1;
     const DEFAULT_LIMIT = 10;
     const [activeTab, setActiveTab] = useState(BOOKING_TABS[0].value);
@@ -247,8 +252,8 @@ const HostBookings = ({ withTabs = true, status, date, embedded = false, title =
                                             allowClear={false}
                                             triggerClassName="h-9 rounded-full border border-[#dddceb] px-3 text-[#4f4d67] outline-none bg-white shadow-none"
                                             textClassName="text-[#4f4d67]"
-                                            minDate={bookings?.status === "confirmed" ? getTodayIsoLocal() : undefined}
-                                            maxDate={bookings?.status === "confirmed" ? undefined : getTodayIsoLocal()}
+                                            minDate={bookings?.status === "confirmed" ? (isMounted ? getTodayIsoLocal() : "") : undefined}
+                                            maxDate={bookings?.status === "confirmed" ? undefined : (isMounted ? getTodayIsoLocal() : "")}
                                         />
                                         <ReusableCalendarInput
                                             value={dateInputValue}
@@ -260,7 +265,7 @@ const HostBookings = ({ withTabs = true, status, date, embedded = false, title =
                                             allowClear={false}
                                             triggerClassName="h-9 rounded-full border border-[#dddceb] px-3 text-[#4f4d67] outline-none bg-white shadow-none"
                                             textClassName="text-[#4f4d67]"
-                                            maxDate={getTodayIsoLocal()}
+                                            maxDate={isMounted ? getTodayIsoLocal() : ""}
                                         />
                                     </div>
                                     {!!selectedDates.length && (

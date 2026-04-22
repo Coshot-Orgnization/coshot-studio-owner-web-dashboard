@@ -38,7 +38,12 @@ const AddPricingAndBooking = () => {
     const [overtimePrice, setOvertimePrice] = useState("");
     const [discountRows, setDiscountRows] = useState([]);
     const [createStudio] = useCreateStudioMutation();
-    const studioId = typeof window !== "undefined" ? localStorage.getItem("studioId") || "" : "";
+    const [studioId, setStudioId] = useState("");
+
+    useEffect(() => {
+        setStudioId(localStorage.getItem("studioId") || "");
+    }, []);
+
     const { data: studioDetails } = useGetStudioDetailsQuery(studioId, {
         skip: !studioId,
         refetchOnMountOrArgChange: true,

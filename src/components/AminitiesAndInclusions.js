@@ -10,7 +10,12 @@ import { showErrorToast, showSuccessToast } from "@/helpers/toast";
 
 const AminitiesAndInclusions = () => {
     const router = useRouter();
-    const studioId = typeof window !== "undefined" ? localStorage.getItem("studioId") || "" : "";
+    const [studioId, setStudioId] = useState("");
+
+    useEffect(() => {
+        setStudioId(localStorage.getItem("studioId") || "");
+    }, []);
+
     const hasPrefilledRef = useRef(false);
     const { data } = useAmenitiesListQuery();
     const [createStudio, { isLoading }] = useCreateStudioMutation();

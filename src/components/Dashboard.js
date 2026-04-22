@@ -1,12 +1,12 @@
 "use client";
+import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import { useStudioOwnerDashboardStatsQuery } from '@/redux/studio-owner/studioOwnerApi'
 import { useSelector } from 'react-redux';
 import React, { useEffect, useState } from 'react'
 import Navbar from './Navbar';
 import HostStudiosList from './HostStudiosList';
 import BookingSkeletonLoading from '@/helpers/BookingSkeletonLoading';
-import Footer from './Footer';
-import HostBookings from './HostBookings';
 import { useRouter } from 'next/navigation';
 import CommonPagination from './CommonPagination';
 import { getPaginationFromResponse } from '@/helpers/pagination';
@@ -14,6 +14,11 @@ import NoData from './NoData';
 import { useStudioOwnerStudioListQuery } from '@/redux/studios/studiosApi';
 import { useCheckProfileMutation } from '@/redux/auth/authApi';
 import { formatAmount } from '@/helpers/formatAmount';
+
+const HostBookings = dynamic(() => import('./HostBookings'), {
+    loading: () => <BookingSkeletonLoading />
+});
+const Footer = dynamic(() => import('./Footer'));
 
 const Dashboard = () => {
     const { data } = useStudioOwnerDashboardStatsQuery(undefined, {
@@ -37,6 +42,11 @@ const Dashboard = () => {
     const nextBookings = stats?.upcomingBookingsCount ?? 0;
     const totalEarnings = stats?.earningsLastMonth ?? 0;
     const [isProfileCompleted, setIsProfileCompleted] = useState(false);
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
 
     const statCards = [
         { label: "Total Studios", value: totalStudios, prefix: "" },
@@ -114,7 +124,13 @@ const Dashboard = () => {
             </div>
             {totalStudios === 0 ?
                 <div className='grid justify-items-center text-center md:flex md:text-start justify-center mt-10'>
-                    <img src='/images/navbar/stuioClip.png' className='h-90 w-120' />
+                    <Image
+                        src='/images/navbar/stuioClip.png'
+                        alt="No studios"
+                        width={480}
+                        height={360}
+                        className='h-90 w-120 object-contain'
+                    />
                     <div className='flex flex-col justify-center gap-1'>
                         <span className="text-2xl font-semibold text-[#272727]">
                             You haven’t added any studios yet.
@@ -217,7 +233,7 @@ const Dashboard = () => {
                                     embedded
                                     withTabs={false}
                                     status="confirmed"
-                                    date={new Date().toISOString().split("T")[0]}
+                                    date={isMounted ? new Date().toISOString().split("T")[0] : ""}
                                 />
                             )}
                         </div>

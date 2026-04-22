@@ -33,7 +33,12 @@ const GOOGLE_MAPS_LIBRARIES = ["places"];
 
 const AddStudioLocation = () => {
     const router = useRouter();
-    const studioId = typeof window !== "undefined" ? localStorage.getItem("studioId") || "" : "";
+    const [studioId, setStudioId] = useState("");
+
+    useEffect(() => {
+        setStudioId(localStorage.getItem("studioId") || "");
+    }, []);
+
     const hasPrefilledRef = useRef(false);
     const [createStudio, { isLoading }] = useCreateStudioMutation();
     const autocompleteRef = useRef(null);

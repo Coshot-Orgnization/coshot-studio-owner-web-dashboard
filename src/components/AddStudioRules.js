@@ -9,7 +9,12 @@ import { showErrorToast, showSuccessToast } from "@/helpers/toast";
 
 const AddStudioRules = () => {
     const router = useRouter();
-    const studioId = typeof window !== "undefined" ? localStorage.getItem("studioId") || "" : "";
+    const [studioId, setStudioId] = useState("");
+
+    useEffect(() => {
+        setStudioId(localStorage.getItem("studioId") || "");
+    }, []);
+
     const hasPrefilledRef = useRef(false);
     const { data } = useRefundPoliciesListQuery();
     const [createStudio, { isLoading }] = useCreateStudioMutation();

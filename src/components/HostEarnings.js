@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import Navbar from './Navbar';
 import Footer from './Footer';
@@ -203,6 +203,11 @@ const StudioCard = ({ item }) => (
 );
 
 const HostEarnings = () => {
+    const [isMounted, setIsMounted] = useState(false);
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const router = useRouter();
@@ -330,7 +335,7 @@ const HostEarnings = () => {
                                         value={startDate}
                                         onChange={setStartDate}
                                         minDate={"2022-01-01"}
-                                        maxDate={getTodayIsoLocal()}
+                                        maxDate={isMounted ? getTodayIsoLocal() : ""}
                                     />
 
                                     <DatePill
@@ -338,7 +343,7 @@ const HostEarnings = () => {
                                         value={endDate}
                                         onChange={setEndDate}
                                         minDate={startDate || ''}
-                                        maxDate={getTodayIsoLocal()}
+                                        maxDate={isMounted ? getTodayIsoLocal() : ""}
                                     />
 
                                     <button

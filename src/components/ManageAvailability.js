@@ -97,7 +97,12 @@ const TimeDropdown = ({ value, options, onSelect }) => {
 
 const ManageAvailability = () => {
     const router = useRouter();
-    const studioId = typeof window !== "undefined" ? localStorage.getItem("studioId") || "" : "";
+    const [studioId, setStudioId] = useState("");
+
+    useEffect(() => {
+        setStudioId(localStorage.getItem("studioId") || "");
+    }, []);
+
     const hasPrefilledRef = useRef(false);
     const [createStudio] = useCreateStudioMutation();
     const [sameHours, setSameHours] = useState(false);

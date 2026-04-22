@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { formatAmount } from '@/helpers/formatAmount';
 import { imageSrcHandler } from '@/helpers/imageSrcHandler'
 import CancellationReasonModal from '@/modals/CancellationReasonModal';
@@ -38,20 +39,31 @@ const HostBookingsList = ({ booking, showBookingActions = false, onCancelBooking
     return (
         <article className='overflow-hidden rounded-xl border border-[#E8E8E8] bg-[#EFF2FF]'>
             <div className='flex flex-col sm:flex-row gap-4 bg-white sm:max-h-47.5'>
-                <div>
-                    <img
+                <div className='relative w-full sm:w-41 h-47.5'>
+                    <Image
                         src={booking?.studio?.images && imageSrcHandler(booking?.studio?.images[0]?.imagePath)}
                         alt={booking?.studio?.name}
-                        className='h-47.5 w-full sm:w-41 object-cover'
+                        fill
+                        className='object-cover'
                     />
                 </div>
                 <div className="flex min-w-0 flex-1 flex-col gap-2 justify-evenly p-3 sm:p-0 sm:mt-1">
-                    <p className="truncate text-base font-medium text-[#1f1f2a] flex gap-2 items-center"><img src="/images/booking/studioName.png" className="h-4 w-4" /> {bookedStudio.name}</p>
-                    <p className="text-sm text-[#2f2f3f] flex gap-2 items-center"><img src="/images/booking/calender.png" className="h-4 w-4" /> {formatBookingDate(booking.bookingDate)}</p>
-                    <p className="text-sm text-[#2f2f3f] flex gap-2 items-center"><img src="/images/booking/clock.png" className="h-4 w-4" /> {booking.startTimeFormatted} - {booking.endTimeFormatted}</p>
-                    <p className="text-sm text-[#2f2f3f] flex gap-2 items-center"><img src="/images/booking/duration.png" className="h-4 w-4" /> {booking.durationHours} hours</p>
+                    <p className="truncate text-base font-medium text-[#1f1f2a] flex gap-2 items-center">
+                        <Image src="/images/booking/studioName.png" alt="studio" width={16} height={16} className="h-4 w-4" /> {bookedStudio.name}
+                    </p>
+                    <p className="text-sm text-[#2f2f3f] flex gap-2 items-center">
+                        <Image src="/images/booking/calender.png" alt="calendar" width={16} height={16} className="h-4 w-4" /> {formatBookingDate(booking.bookingDate)}
+                    </p>
+                    <p className="text-sm text-[#2f2f3f] flex gap-2 items-center">
+                        <Image src="/images/booking/clock.png" alt="clock" width={16} height={16} className="h-4 w-4" /> {booking.startTimeFormatted} - {booking.endTimeFormatted}
+                    </p>
+                    <p className="text-sm text-[#2f2f3f] flex gap-2 items-center">
+                        <Image src="/images/booking/duration.png" alt="duration" width={16} height={16} className="h-4 w-4" /> {booking.durationHours} hours
+                    </p>
                     <p className="text-sm text-[#2f2f3f] flex gap-2 items-center">💰 Earnings: ₹{formatAmount(booking.finalAmount)}</p>
-                    <p className="text-sm text-[#2f2f3f] flex gap-2 items-center"><img src="/images/booking/bookingId.png" className="h-4 w-4" /> {booking?.referenceCode}</p>
+                    <p className="text-sm text-[#2f2f3f] flex gap-2 items-center">
+                        <Image src="/images/booking/bookingId.png" alt="id" width={16} height={16} className="h-4 w-4" /> {booking?.referenceCode}
+                    </p>
                 </div>
             </div>
 
@@ -60,16 +72,34 @@ const HostBookingsList = ({ booking, showBookingActions = false, onCancelBooking
                     <div className='grid justify-between'>
                         <span className='text-[12px] font-medium text-[#6D5EF6]'>Booked By:</span>
                         <div className='flex items-center mt-1'>
-                            {booking?.user?.profileImage ? <img src={booking?.user?.profileImage && imageSrcHandler(booking?.user?.profileImage)} className='h-9 w-9 rounded-full' /> : <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold text-[#5B4FEB] bg-gray-200">{booking?.guestName?.[0]?.toUpperCase() ?? "H"}</div>}
+                            {booking?.user?.profileImage ? (
+                                <Image
+                                    src={booking?.user?.profileImage && imageSrcHandler(booking?.user?.profileImage)}
+                                    alt="profile"
+                                    width={36}
+                                    height={36}
+                                    className='h-9 w-9 rounded-full object-cover'
+                                />
+                            ) : (
+                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold text-[#5B4FEB] bg-gray-200">
+                                    {booking?.guestName?.[0]?.toUpperCase() ?? "H"}
+                                </div>
+                            )}
                             <div className='grid'>
                                 <span className='text-[14px] font-semibold ml-2 capitalize'>{booking?.user?.name ?? booking?.guestName ?? "User"}</span>
-                                <span className='text-[11px] font-normal ml-2 flex items-center gap-1 mt-0.5'><img src='/images/booking/phone.png' className='h-3 w-3 ' />{booking?.user?.phone ?? booking?.guestPhone}</span>
+                                <span className='text-[11px] font-normal ml-2 flex items-center gap-1 mt-0.5'>
+                                    <Image src='/images/booking/phone.png' alt="phone" width={12} height={12} className='h-3 w-3 ' />
+                                    {booking?.user?.phone ?? booking?.guestPhone}
+                                </span>
                             </div>
                         </div>
                     </div>
                     {bookingStatus === "confirmed" && (
-                        <img
+                        <Image
                             src='/images/navbar/Call.png'
+                            alt='Call guest'
+                            width={36}
+                            height={36}
                             className='h-9 w-9 cursor-pointer mt-2'
                             role='button'
                             onClick={() => {
@@ -78,7 +108,6 @@ const HostBookingsList = ({ booking, showBookingActions = false, onCancelBooking
                                     window.location.href = `tel:${phone}`;
                                 }
                             }}
-                            alt='Call guest'
                         />
                     )}
                 </div>

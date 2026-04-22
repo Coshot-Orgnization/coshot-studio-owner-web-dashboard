@@ -28,6 +28,12 @@ const normalizeDateString = (value) => {
 };
 
 const ViewBlockDates = () => {
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
     const [selectedStudio, setSelectedStudio] = useState('');
     const [isBlockStudioAvailabilityOpen, setIsBlockStudioAvailabilityOpen] = useState(false);
     const [isStudioDropdownOpen, setIsStudioDropdownOpen] = useState(false);
@@ -273,7 +279,7 @@ const ViewBlockDates = () => {
                                                 textClassName="text-[12px] font-medium text-[#4a4759]"
                                                 formatDisplayDate={formatDisplayDate}
                                                 allowClear={false}
-                                                minDate={getTodayIsoLocal()}
+                                                minDate={isMounted ? getTodayIsoLocal() : ""}
                                             />
                                         </div>
 
