@@ -1,16 +1,24 @@
 "use client";
 
+import dynamic from "next/dynamic";
+import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from 'react';
 import { SidebarProvider } from '../context/SidebarContext';
-import Sidebar from './Sidebar';
-import Header from './Header';
-import ProtectedRoute from './ProtectedRoute';
-import NoInternetConnectionPage from './NoInternetConnectionPage';
-import CommonPageLoader from './CommonPageLoader';
+
+const Sidebar = dynamic(() => import('./Sidebar'));
+const Header = dynamic(() => import('./Header'));
+const ProtectedRoute = dynamic(() => import('./ProtectedRoute'));
+const NoInternetConnectionPage = dynamic(() => import('./NoInternetConnectionPage'));
+const CommonPageLoader = dynamic(() => import('./CommonPageLoader'));
+
+const PUBLIC_ROUTES_WITHOUT_APP_SHELL = ["/login"];
 
 const GlobalClientLayout = ({ children }) => {
     const [isOnline, setIsOnline] = useState(true);
     const [isMounted, setIsMounted] = useState(false);
+    const pathname = usePathname();
+
+    const shouldUseAppShell = !PUBLIC_ROUTES_WITHOUT_APP_SHELL.includes(pathname);
 
     useEffect(() => {
         setIsMounted(true);
@@ -34,18 +42,23 @@ const GlobalClientLayout = ({ children }) => {
 
     return (
         <SidebarProvider>
-            <div className="relative min-h-screen">
-                <Sidebar />
-                <Header />
-                <div className="flex-1 w-full" suppressHydrationWarning>
-                    <ProtectedRoute>
-                        {children}
-                    </ProtectedRoute>
-                </div>
+            {shouldUseAppShell ? (
+                <div className="relative min-h-screen">
+                    <Sidebar />
+                    <Header />
+                    <div className="flex-1 w-full" suppressHydrationWarning>
+                        <ProtectedRoute>
+                            {children}
+                        </ProtectedRoute>
+                    </div>
 
-                {!isMounted ? <CommonPageLoader /> : null}
-                {!isOnline ? <NoInternetConnectionPage /> : null}
-            </div>
+                    {!isMounted ? <CommonPageLoader /> : null}
+                    {!isOnline ? <NoInternetConnectionPage /> : null}
+                </div>
+            ) : (
+                <>{children}</>
+            )}
+
         </SidebarProvider>
     );
 };

@@ -1,7 +1,7 @@
 import "./globals.css";
 import Providers from "../redux/providers";
 import GlobalClientLayout from "../components/GlobalClientLayout";
-import { ToastContainer } from "react-toastify";
+import DeferredToastContainer from "../components/DeferredToastContainer";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.coshot.in";
 
@@ -142,7 +142,7 @@ export default function RootLayout({ children }) {
       </head>
       <body suppressHydrationWarning>
         <Providers>
-          <ToastContainer />
+          <DeferredToastContainer />
           <GlobalClientLayout>
             {children}
           </GlobalClientLayout>
