@@ -11,7 +11,7 @@ export const bookingsApi = api.injectEndpoints({
         }),
         refundStatus: builder.query({
             query: (id) => ({
-                url: `/booking/${id}/refund-status`,
+                url: `/studio-owner/bookings/${id}/refund-status`,
                 method: "GET",
             }),
         }),
