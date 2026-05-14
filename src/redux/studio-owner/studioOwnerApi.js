@@ -99,7 +99,7 @@ export const studioOwnerApi = api.injectEndpoints({
 
         deleteUserProfile: builder.mutation({
             query: (body) => ({
-                url: "/user/deletion-request",
+                url: "/account/delete/initiate",
                 method: "POST",
                 body,
             }),
@@ -112,8 +112,16 @@ export const studioOwnerApi = api.injectEndpoints({
                 body,
             }),
         }),
+
+        confirmDeleteUserProfile: builder.mutation({
+            query: (body) => ({
+                url: "/account/profile",
+                method: "DELETE",
+                body,
+            }),
+        }),
     }),
 })
 
 export const { useGetStudioOwnerProfileQuery, useUpdateStudioProfileMutation, useBookingsRevenueQuery, useOfflineBookingMutation, useSendEmailVerificationOtpMutation, useVerifyOwnerEmailOtpMutation, useStudioOwnerRefundStatusQuery,
-    useStudioOwnerBookingListQuery, useCancelBookingByOwnerMutation, useStudioOwnerDashboardStatsQuery, useDeleteUserProfileMutation, useUploadImageUrlMutation } = studioOwnerApi;
+    useStudioOwnerBookingListQuery, useCancelBookingByOwnerMutation, useStudioOwnerDashboardStatsQuery, useDeleteUserProfileMutation, useUploadImageUrlMutation, useConfirmDeleteUserProfileMutation } = studioOwnerApi;

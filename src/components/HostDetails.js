@@ -9,7 +9,7 @@ import { imageSrcHandler } from '@/helpers/imageSrcHandler';
 import RejectedModal from '@/modals/RejectedModal';
 import WarningModal from '@/modals/WarningModal';
 import OtpVerificationModal from '@/modals/OtpVerificationModal';
-import { useDeleteUserProfileMutation, useGetStudioOwnerProfileQuery, useSendEmailVerificationOtpMutation, useUpdateStudioProfileMutation, useVerifyOwnerEmailOtpMutation } from '@/redux/studio-owner/studioOwnerApi';
+import { useConfirmDeleteUserProfileMutation, useDeleteUserProfileMutation, useGetStudioOwnerProfileQuery, useSendEmailVerificationOtpMutation, useUpdateStudioProfileMutation, useVerifyOwnerEmailOtpMutation } from '@/redux/studio-owner/studioOwnerApi';
 import { useGetOwnerBankAccountDetailsQuery } from '@/redux/bank-accounts/bankAccountsApi';
 
 const HostDetails = () => {
@@ -18,6 +18,7 @@ const HostDetails = () => {
     });
     const [updateProfile] = useUpdateStudioProfileMutation();
     const [deleteOwnerProfile, { isLoading: isDeleting }] = useDeleteUserProfileMutation();
+    const [confirmDeleteProfile, { isLoading: isConfirmingDelete }] = useConfirmDeleteUserProfileMutation();
 
     const profile = useMemo(() => {
         const payload = data?.data?.data ?? data?.data ?? data ?? {};
@@ -38,6 +39,8 @@ const HostDetails = () => {
     const [businessProofUpload, setBusinessProofUpload] = useState({ fileName: '', uploadedPath: '' });
     const [showBankAccountModal, setShowBankAccountModal] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isDeleteOtpModalOpen, setIsDeleteOtpModalOpen] = useState(false);
+    const [confirmationToken, setConfirmationToken] = useState('');
     const [deleteWarning, setDeleteWarning] = useState({ isOpen: false, type: null });
     const [previewImage, setPreviewImage] = useState(null);
     const [showRejectionModal, setShowRejectionModal] = useState(false);
@@ -314,15 +317,26 @@ const HostDetails = () => {
         }
     };
 
-    const handleDeleteProfile = async (reason) => {
+    const handleDeleteProfile = async () => {
         try {
-            const res = await deleteOwnerProfile({ reason }).unwrap();
-            showSuccessToast(res?.message || "Profile deletion request submitted.");
+            const res = await deleteOwnerProfile({ "scope": "account" }).unwrap();
+            setConfirmationToken(res?.data?.confirmationToken || res?.confirmationToken || "");
             setIsDeleteModalOpen(false);
-            // Optionally redirect or logout
+            setIsDeleteOtpModalOpen(true);
+            showSuccessToast(res?.message || "Verification code sent to your phone.");
+        } catch (error) {
+            showErrorToast(error?.data?.message || "Failed to initiate profile deletion.");
+        }
+    };
+
+    const handleDeleteOtpVerify = async (otp) => {
+        try {
+            const res = await confirmDeleteProfile({ otp, confirmationToken }).unwrap();
+            showSuccessToast(res?.message || "Profile deleted successfully.");
+            setIsDeleteOtpModalOpen(false);
             window.location.href = "/";
         } catch (error) {
-            showErrorToast(error?.data?.message || "Failed to delete profile.");
+            showErrorToast(error?.data?.message || "Failed to verify OTP.");
         }
     };
 
@@ -630,9 +644,7 @@ const HostDetails = () => {
                 onClose={() => setIsDeleteModalOpen(false)}
                 onConfirm={handleDeleteProfile}
                 title="Delete Host Profile"
-                message="Are you sure you want to delete your host profile? This action will initiate the account deletion process and is irreversible."
-                showReasonField={true}
-                minReasonLength={10}
+                message="Are you really want to delete the account?"
                 confirmText={isDeleting ? "Deleting..." : "Confirm Delete"}
                 cancelText="Cancel"
             />
@@ -649,6 +661,18 @@ const HostDetails = () => {
                 onClose={() => setIsEmailOtpModalOpen(false)}
                 onVerify={handleEmailOtpVerify}
                 onResend={handleEmailOtpResend}
+            />
+
+            <OtpVerificationModal
+                isOpen={isDeleteOtpModalOpen}
+                targetValue={formValues.phone}
+                targetPrefix="+91"
+                isBusy={isConfirmingDelete}
+                instructionText="Enter Verification Code for account deletion"
+                sentToText="We've sent a verification code to"
+                onClose={() => setIsDeleteOtpModalOpen(false)}
+                onVerify={handleDeleteOtpVerify}
+                onResend={handleDeleteProfile}
             />
         </section >
 
