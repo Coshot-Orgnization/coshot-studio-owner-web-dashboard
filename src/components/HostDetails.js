@@ -319,7 +319,7 @@ const HostDetails = () => {
 
     const handleDeleteProfile = async () => {
         try {
-            const res = await deleteOwnerProfile({ "scope": "account" }).unwrap();
+            const res = await deleteOwnerProfile({ "scope": "profile" }).unwrap();
             setConfirmationToken(res?.data?.confirmationToken || res?.confirmationToken || "");
             setIsDeleteModalOpen(false);
             setIsDeleteOtpModalOpen(true);
