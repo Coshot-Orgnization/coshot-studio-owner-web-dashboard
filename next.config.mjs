@@ -9,6 +9,11 @@ const nextConfig = {
         hostname: 'amzn-coshot-public-bucket.s3.ap-south-1.amazonaws.com',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'scontent.cdninstagram.com',
+        pathname: '/**',
+      },
     ],
   },
 };
