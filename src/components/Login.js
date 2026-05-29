@@ -91,9 +91,10 @@ export default function Login() {
         }).then((res) => {
 
             if (res?.data?.success) {
-                const token = res?.data?.data?.accessToken
-                if (token && typeof window !== "undefined") {
-                    window.localStorage.setItem("auth_token", token);
+                const { accessToken, refreshToken } = res?.data?.data || {};
+                if (typeof window !== "undefined") {
+                    if (accessToken) window.localStorage.setItem("auth_token", accessToken);
+                    if (refreshToken) window.localStorage.setItem("refresh_token", refreshToken);
                 }
 
                 showSuccessToast("OTP verified successfully");

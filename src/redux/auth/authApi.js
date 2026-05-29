@@ -19,7 +19,7 @@ export const authApi = api.injectEndpoints({
             }),
         }),
 
-        refeshAccessToken: builder.mutation({
+        refreshAccessToken: builder.mutation({
             query: () => ({
                 url: "/auth/refresh-token",
                 method: "POST",
@@ -44,4 +44,4 @@ export const authApi = api.injectEndpoints({
     }),
 });
 
-export const { useSendOtpMutation, useVerifyOtpMutation, useRefeshAccessTokenMutation, useLogOutMutation, useCheckProfileMutation } = authApi;
+export const { useSendOtpMutation, useVerifyOtpMutation, useRefreshAccessTokenMutation, useLogOutMutation, useCheckProfileMutation } = authApi;

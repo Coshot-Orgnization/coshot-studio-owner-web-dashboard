@@ -5,25 +5,17 @@ import { authApi } from "./authApi";
 const initialState = {
     user: null,
     token: null,
+    refreshToken: null,
     isAuthenticated: false,
     role: "user",
 };
 
 const extractTokenFromPayload = (payload) => {
-    return (
-        payload?.token ??
-        payload?.accessToken ??
-        payload?.authToken ??
-        payload?.jwt ??
-        payload?.data?.token ??
-        payload?.data?.accessToken ??
-        payload?.data?.authToken ??
-        payload?.data?.jwt ??
-        payload?.data?.data?.token ??
-        payload?.data?.data?.accessToken ??
-        payload?.data?.data?.authToken ??
-        payload?.data?.data?.jwt
-    );
+    const data = payload?.data?.data ?? payload?.data ?? payload;
+    return {
+        accessToken: data?.accessToken ?? data?.token ?? data?.authToken ?? data?.jwt,
+        refreshToken: data?.refreshToken ?? data?.refresh_token
+    };
 };
 
 const authSlice = createSlice({
@@ -36,30 +28,42 @@ const authSlice = createSlice({
             state.isAuthenticated = Boolean(state.user);
         },
         setCredentials: (state, action) => {
-            const userData = action.payload?.data?.user ?? action.payload?.data ?? action.payload;
-            const token = extractTokenFromPayload(action.payload);
-            const role = action.payload?.data?.user?.activeRole ?? userData?.activeRole;
-            if (userData !== undefined) {
+            const { accessToken, refreshToken } = extractTokenFromPayload(action.payload);
+            const userData = action.payload?.data?.user ?? action.payload?.user;
+            const role = action.payload?.data?.user?.activeRole ?? action.payload?.user?.activeRole ?? action.payload?.role;
+            
+            if (accessToken) {
+                state.token = accessToken;
+                if (typeof window !== "undefined") {
+                    window.localStorage.setItem("auth_token", accessToken);
+                }
+            }
+
+            if (refreshToken) {
+                state.refreshToken = refreshToken;
+                if (typeof window !== "undefined") {
+                    window.localStorage.setItem("refresh_token", refreshToken);
+                }
+            }
+            
+            if (userData) {
                 state.user = userData;
+                state.isAuthenticated = true;
             }
-            if (token !== undefined) {
-                state.token = token;
-            }
+            
             if (role) {
                 state.role = role;
-            }
-            state.isAuthenticated = Boolean(state.user);
-            if (token && typeof window !== "undefined") {
-                window.localStorage.setItem("auth_token", token);
             }
         },
         logOut: (state) => {
             state.user = null;
             state.token = null;
+            state.refreshToken = null;
             state.isAuthenticated = false;
             state.role = "";
             if (typeof window !== "undefined") {
                 window.localStorage.removeItem("auth_token");
+                window.localStorage.removeItem("refresh_token");
             }
         },
     },
@@ -69,22 +73,32 @@ const authSlice = createSlice({
             (state, { payload }) => {
                 const userData =
                     payload?.user ?? payload?.data?.user ?? payload?.data ?? payload;
-                const token = extractTokenFromPayload(payload);
+                const { accessToken, refreshToken } = extractTokenFromPayload(payload);
                 const role =
                     payload?.role ?? payload?.data?.user?.activeRole ?? userData?.activeRole;
+                
                 if (userData !== undefined) {
                     state.user = userData;
                 }
-                if (token !== undefined) {
-                    state.token = token;
+                
+                if (accessToken) {
+                    state.token = accessToken;
+                    if (typeof window !== "undefined") {
+                        window.localStorage.setItem("auth_token", accessToken);
+                    }
                 }
+
+                if (refreshToken) {
+                    state.refreshToken = refreshToken;
+                    if (typeof window !== "undefined") {
+                        window.localStorage.setItem("refresh_token", refreshToken);
+                    }
+                }
+
                 if (role) {
                     state.role = role;
                 }
                 state.isAuthenticated = Boolean(state.user);
-                if (token && typeof window !== "undefined") {
-                    window.localStorage.setItem("auth_token", token);
-                }
             }
         );
     },
